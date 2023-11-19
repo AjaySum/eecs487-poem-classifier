@@ -1,14 +1,17 @@
 import sys
-from syllabledetection import count_syllables
+from utils import count_syllables
 
 def read_text_file(file_path):
     try:
         with open(file_path, 'r') as file:
             content = file.read()
-            content = content.split()
-            for word in content:
-                # print(content[6])
-                count_syllables(word)
+            content = content.split('\n')
+            for sent in content:
+                sent_syllables = 0
+                for word in sent.split():
+                    sent_syllables += count_syllables(word)
+                print(f"{sent}: {sent_syllables}")
+                    
             return content
     except FileNotFoundError:
         print(f"Error: File not found at path '{file_path}'.")
