@@ -1,5 +1,6 @@
 import string
 import nltk
+from rhymetagger import RhymeTagger
 nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
 
 
@@ -38,3 +39,13 @@ def count_syllables(word):
 
         print(f"BACKUPPPPPPPPPP The number of syllables in '{word}' is: {count}")      
         return count
+
+
+def word_rhyme(poem):
+    """"Detects if the words rhyme"""""
+    print(poem)
+    rt = RhymeTagger()
+    rt.load_model(model = 'en')
+    rhymes = rt.tag(poem, output_format=1) 
+    print(rhymes)
+    
