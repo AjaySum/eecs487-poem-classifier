@@ -1,15 +1,16 @@
 import string
 import nltk
 from rhymetagger import RhymeTagger
-nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
-
+# nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
 
 d = nltk.corpus.cmudict.dict()
 
 def count_syllables(word): 
     """Count number of syllables in a word."""
-    word = ''.join(char for char in word if char not in string.punctuation)
-    word = word.lower()
+    # word = ''.join(char for char in word if char not in string.punctuation)
+    # word = word.lower()
+
+    # print("PROCESSED: ", word)
     
     if word in d:
         syllable_count = max([len(list(y for y in x if y[-1].isdigit())) for x in d[word]])
@@ -46,6 +47,13 @@ def word_rhyme(poem):
     print(poem)
     rt = RhymeTagger()
     rt.load_model(model = 'en')
-    rhymes = rt.tag(poem, output_format=1) 
+    rhymes = rt.tag(poem, output_format=3) 
     print(rhymes)
+    return rhymes
+    # rt2 = RhymeTagger.new_model(lang = "en")
+    # rt2.add_to_model()
+
+
+
     
+
