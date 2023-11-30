@@ -1,6 +1,10 @@
 import string
 import nltk
 from rhymetagger import RhymeTagger
+import re
+import pronouncing
+from string import punctuation
+import numpy as np
 # nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
 
 d = nltk.corpus.cmudict.dict()
@@ -53,7 +57,51 @@ def word_rhyme(poem):
     # rt2 = RhymeTagger.new_model(lang = "en")
     # rt2.add_to_model()
 
+def get_syllabic_stress(word):
+    syllables = d.get(word.lower(), [])
+   # print(syllables)
+    if syllables:
+        return [1 if any(char.isdigit() for char in s) else 0 for s in syllables[0]]
+    else:
+        # Handle unknown words
+        return []
+    
+def scan_line(line):
+    stress_pattern = [get_syllabic_stress(word) for word in line]
+    #print(stress_pattern)
+    scansion = ['/' if sum(pattern) == 1 else 'x' for pattern in stress_pattern]
+    return ''.join(scansion)
 
+def get_syllables(word):
+    """
+    Look up a word in the CMU dictionary, return a list of syllables
+    """
+
+    try:
+        return d[word.lower()]
+    except KeyError:
+        return False
+
+
+def stress(word):
+    """
+    Represent strong and weak stress of a word with a series of 1's and 0's
+    """
+
+    syllables = get_syllables(word)
+
+    if syllables:
+        # TODO: Implement a more advanced way of handling multiple pronunciations than just picking the first
+        pronunciation_string = ''.join(syllables[0])
+        # Not interested in secondary stress
+        stress_numbers = ''.join([x.replace('2', '1')
+                                  for x in pronunciation_string if x.isdigit()])
+
+        return stress_numbers
+
+    # Provisional logic for adding stress when the word is not in the dictionary is to stress first syllable only
+    return '1' + '0' * (count_syllables(word) - 1)
+    
 
     
 

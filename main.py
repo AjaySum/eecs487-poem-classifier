@@ -2,44 +2,60 @@ import sys
 import utils
 import poemDetector
 import string
-from datasets import load_dataset
-haikus = load_dataset("statworx/haiku")
+import pronouncing
+# from datasets import load_dataset
+# haikus = load_dataset("statworx/haiku")
 
 def read_text_file(file_path):
     try:
         with open(file_path, 'r') as file:
             content = file.read()
             content = content.split('\n')
-            # punctuation_string = string.punctuation + '’'
-            punctuation_string = string.punctuation + "…"
+            # # punctuation_string = string.punctuation + '’'
+            # punctuation_string = string.punctuation + "…"
 
-            for i in range(len(content)):
-                # sent_syllables = 0
-                clean_content = ''
-                for char in content[i]:
-                    if char == '’' or char == "'":
-                        clean_content += "'"
-                    elif char not in punctuation_string:
-                        clean_content += char
-                    #content[i] = ''.join(char for char in content[i] if char not in punctuation_string)
-                # content[i] = content[i].lower()
-                content[i] = clean_content.lower()
-                # for word in sent.split():
-                #     sent_syllables += utils.count_syllables(word)
-                # print(f"{sent}: {sent_syllables}")
-            print("CLEANED POEM: ", content)
-            poemDetector.detectHaiku(content)
-            poemDetector.detectLimerick(content)
+            # for i in range(len(content)):
+            #     # sent_syllables = 0
+            #     clean_content = ''
+            #     for char in content[i]:
+            #         if char == '’' or char == "'":
+            #             clean_content += "'"
+            #         elif char not in punctuation_string:
+            #             clean_content += char
+            #         #content[i] = ''.join(char for char in content[i] if char not in punctuation_string)
+            #     # content[i] = content[i].lower()
+            #     content[i] = clean_content.lower()
+            #     # for word in sent.split():
+            #     #     sent_syllables += utils.count_syllables(word)
+            #     # print(f"{sent}: {sent_syllables}")
+            # print("CLEANED POEM: ", content)
+            # poemDetector.detectHaiku(content)
+            # poemDetector.detectLimerick(content)
 
             # poem = [''.join(word for word in content)]
             # poem = ["I like pie", 
             # "pie says hi"]
             # poem = ["unchangeable", "swell"]
             # word_rhyme(poem)
-           # print(poem)
+            #           # print(poem)
             # utils.word_rhyme(content)
-            
-                    
+            word = "shall"
+            word2 = "i"
+            val = utils.stress(word)
+            val2 = utils.stress(word2)
+            print(val)     
+            print(val2)   
+            sent2 = "i love poetry"
+            #val4 = utils.get_line_scansion(sent2)
+            #print(val4)
+
+
+
+            # sent1 = ["shall", "i", "compare", "thee", "to", "a", "summer's", "day"]
+            sent1 = "Shall I compare thee to a summer's day?"
+            # val3 = utils.scan_line(sent1)
+            val3 = utils.detect_iambic_pentameter(sent1)
+            print(val3)
             return content
     except FileNotFoundError:
         print(f"Error: File not found at path '{file_path}'.")
