@@ -1,5 +1,8 @@
 import string
 import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tag import pos_tag
+# from nltk.corpus import uni
 from rhymetagger import RhymeTagger
 import re
 import pronouncing
@@ -8,6 +11,7 @@ import numpy as np
 # nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
 
 d = nltk.corpus.cmudict.dict()
+# t = nltk.download('universal_tagset')
 
 def count_syllables(word): 
     """Count number of syllables in a word."""
@@ -57,51 +61,106 @@ def word_rhyme(poem):
     # rt2 = RhymeTagger.new_model(lang = "en")
     # rt2.add_to_model()
 
-def get_syllabic_stress(word):
-    syllables = d.get(word.lower(), [])
-   # print(syllables)
-    if syllables:
-        return [1 if any(char.isdigit() for char in s) else 0 for s in syllables[0]]
-    else:
-        # Handle unknown words
-        return []
+def get_scansion_line(line):
+    tokens = line.split()
+    pos_tags = pos_tag(tokens)
+    print(tokens)
+    print(pos_tags)
+
+    keep_list = ['NN', 'NNP', 'NNPS', 'NNS', 'VB', 'VBG', 'VBN', 'VBP', 'VBZ']
+
+    scansion = []
+    for i in range(len(tokens)):
+        s = ""
+        if tokens[i] in d:
+            phonemes = d[tokens[i]][0]
+            for phoneme in phonemes:
+                # print(phoneme[-1])
+                if phoneme[-1] == '1' or phoneme[-1] == '2':
+                    # print("HERE")
+                    s += '1'
+                elif phoneme[-1] == '0':
+                    s += '0'
+                
+            if pos_tags[i][1] not in keep_list and len(s) == 1:
+                s = '0'
+        else:
+            s = '1' + '0' * (count_syllables(tokens[i]) - 1)
+
+        if len(s) > 1:
+            for char in s:
+                scansion.append(char)
+            # print(s)
+        else:
+            scansion.append(s)
+    print(scansion)
+
+    return scansion
+
+def scansion_diff(scansion, correct):
+    diff = 0
+    for i in range(len(scansion)):
+        if scansion[i] != correct[i]:
+            diff += 1
+    return diff
+
+def meter_detector(poem):
+    meters = {
+        'iambic trimeter': ['0', '1', '0', '1', '0', '1'],
+        'iambic tetrameter': ['0', '1', '0', '1', '0', '1', '0', '1'],
+        'iambic pentameter': ['0', '1', '0', '1', '0', '1', '0', '1', '0', '1'],
+        # 'trochaic bimeter' : ['1', '0', '1', '0'],
+        'trochaic tetrameter': ['1', '0', '1', '0', '1', '0', '1', '0'],
+        'trochaic pentameter': ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0']
+    }
+    scansions = []
+    for line in poem:
+        scansion = get_scansion_line(line)
+        scansions.append(scansion)
+
+    size = len(scansions[0])
+
+    if size == 6:
+        correct = meters['iambic trimeter']
+        found = True
+        for scansion in scansions:
+            diff = scansion_diff(scansion, correct)
+            if diff/size > 0.34:
+                found = False
+                break
+        if found == True:
+            print("Could be iambic trimeter")
+            return 'iambic trimeter'
+        # return found
+    elif size == 8:
+        correct = [("iambic tetrameter", meters['iambic tetrameter']),
+                   ("trochaic tetrameter", meters['trochaic tetrameter'])]
+        
+        for c in correct:
+            found = True
+            for scansion in scansions:
+                diff = scansion_diff(scansion, c[1])
+                if diff/size > 0.34:
+                    found = False
+                    break
+            if found == True:
+                print("Could be", c[0])
+                return c[0]
+        # return found
+    elif size == 10:
+        correct = [("iambic pentameter", meters['iambic pentameter']),
+                   ("trochaic pentameter",meters['trochaic pentameter'])]
+        
+        for c in correct:
+            found = True
+            for scansion in scansions:
+                diff = scansion_diff(scansion, c[1])
+                if diff/size > 0.34:
+                    found = False
+                    break
+            if found == True:
+                print("Could be", c[0])
+                return c[0]
+        # return found
     
-def scan_line(line):
-    stress_pattern = [get_syllabic_stress(word) for word in line]
-    #print(stress_pattern)
-    scansion = ['/' if sum(pattern) == 1 else 'x' for pattern in stress_pattern]
-    return ''.join(scansion)
-
-def get_syllables(word):
-    """
-    Look up a word in the CMU dictionary, return a list of syllables
-    """
-
-    try:
-        return d[word.lower()]
-    except KeyError:
-        return False
-
-
-def stress(word):
-    """
-    Represent strong and weak stress of a word with a series of 1's and 0's
-    """
-
-    syllables = get_syllables(word)
-
-    if syllables:
-        # TODO: Implement a more advanced way of handling multiple pronunciations than just picking the first
-        pronunciation_string = ''.join(syllables[0])
-        # Not interested in secondary stress
-        stress_numbers = ''.join([x.replace('2', '1')
-                                  for x in pronunciation_string if x.isdigit()])
-
-        return stress_numbers
-
-    # Provisional logic for adding stress when the word is not in the dictionary is to stress first syllable only
-    return '1' + '0' * (count_syllables(word) - 1)
-    
-
-    
-
+    return ''
