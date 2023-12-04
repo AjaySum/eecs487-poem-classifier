@@ -97,3 +97,69 @@ def detectLimerick(poem):
 
     print("NOT A LIMERICK")
     return False
+
+def detectBallad(poem):
+    if len(poem) % 4 != 0:
+        print("NOT A BALLAD")
+        return False
+    
+    correct_rs = [[1,2,3,2], [1,2,1,2]]
+    print("HEREEE", correct_rs)
+    rs = utils.word_rhyme(poem)
+    print(f"Rhymescheme: {rs}")
+    
+    tol = len(poem) * 0.125
+    for c in correct_rs:
+        ballad = True
+        close = True
+        wrong = 0
+        for i in range(len(rs)):
+            if rs[i] != c[i % 4]:
+                ballad = False
+                break
+        if ballad == True:
+            print("IS A BALLAD")
+            return True
+        else:
+            i = 0
+            while i in range(len(rs) - 4):
+                quartrain = [rs[i], rs[i+1], rs[i+2], rs[i+3]]
+                if c == [1,2,3,2]:
+                    if quartrain[1] == None or quartrain[3] == None:
+                        quartrain[1] = 0
+                        quartrain[3] = 0
+                    if quartrain[1] != quartrain[3] or quartrain[0] == quartrain[2]:
+                        print("a", i)
+                        wrong += 1
+                else:
+                    if quartrain[0] == None or quartrain[2] == None:
+                        quartrain[0] = 0
+                        quartrain[2] = 0
+                    if quartrain[1] == None or quartrain[3] == None:
+                        quartrain[1] = 0
+                        quartrain[3] = 0
+                    if quartrain[0] != quartrain[2] or quartrain[1] != quartrain[3]:
+                        print("b", i)
+                        wrong += 1
+                if wrong > tol:
+                    close = False
+                    break
+                i += 4
+            
+            # for i in range(len(rs)):
+            #     if rs[i] == None:
+            #         rs[i] = 1
+            #     if abs(rs[i] - c[i % 4]) > tol:
+            #         print("yAaaaaaaaaaaa")
+            #         close = False
+            #         break
+        if close == True:
+            print("CLOSE TO A BALLAD", c)
+            return False
+
+    print("NOT A BALLAD")
+    return False
+
+
+   
+    
