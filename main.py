@@ -32,6 +32,10 @@ def read_text_file(file_path):
             poemDetector.detectHaiku(content)
             poemDetector.detectLimerick(content)
             poemDetector.detectBallad(content)
+            poemDetector.detectSonnet(content)
+            poemDetector.detectVillanelle(content)
+            poemDetector.detectBlankVerse(content)
+            poemDetector.detectFreeVerse(content)
 
             # for line in content:
             # print(utils.meter_detector(content))
@@ -72,17 +76,13 @@ def read_text_file(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-# def run_program():
-#         poem = ["I like pie", 
-#             "pie says hi"]
-#         # print(poem)
-#         word_rhyme(poem)
 
 if __name__ == "__main__":
     # Check if the user provided a file path as a command-line argument
     if len(sys.argv) != 2:
         print("Usage: python read_file.py <file_path>")
         sys.exit(1)
+
     # Get the file path from the command-line argument
     file_path = sys.argv[1]
 

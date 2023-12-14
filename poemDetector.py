@@ -89,7 +89,7 @@ def detectLimerick(poem):
                 rs[i] = 0
             if abs(rs[i] - correct_rs[i]) > tol:
                 close == False
-
+                break
 
     if close == True:
         print("CLOSE TO A LIMERICK")
@@ -161,5 +161,107 @@ def detectBallad(poem):
     return False
 
 
-   
+def detectSonnet(poem):
+    if len(poem) != 14:
+        print("NOT A SONNET")
+        return False
     
+    shakespearean_rs = [1,2,1,2,3,4,3,4,5,6,5,6,7,7]
+    petrarchan_rs = [[1,2,2,1,3,4,4,3,5,6,5,6,5,6],
+                     [1,2,2,1,3,4,4,3,5,6,7,5,6,7]]
+    rs = utils.word_rhyme(poem)
+    print(f"Rhymescheme: {rs}")
+    tol = 1
+    close = True
+    if rs == shakespearean_rs:
+        print("IS A SHAKESPEAREAN SONNET")
+        return True
+    else:
+        for i in range(len(rs)):
+            if rs[i] == None:
+                rs[i] = 0
+            if abs(rs[i] - shakespearean_rs[i]) > tol:
+                close == False
+                break
+
+    if close == True:
+        print("CLOSE TO A SHAKESPEAREAN SONNET")
+        return False
+    
+    close_1 = False
+    for p_rs in petrarchan_rs:
+        close = True
+        if rs == p_rs:
+            print("IS A PETRARCHAN SONNET")
+            return True
+        else:
+            for i in range(len(rs)):
+                if rs[i] == None:
+                    rs[i] = 0
+                if abs(rs[i] - p_rs[i]) > tol:
+                    close == False
+                    break
+        if close:
+            close_1 = True
+    
+    if close_1:
+        print("CLOSE TO A PETRARCHAN SONNET")
+        return False
+
+    print("NOT A SONNET")
+    return False
+
+
+def detectVillanelle(poem):
+    if len(poem) != 19:
+        print("NOT A VILLANELLE")
+        return False
+    
+    first = poem[0]
+    third = poem[2]
+
+    if first != poem[5] or first != poem[11] or first != poem[17]:
+        print("NOT A VILLANELLE")
+        return False
+    if third != poem[8] or third != poem[14] or third != poem[18]:
+        print("NOT A VILLANELLE")
+        return False
+    
+    correct_rs = [1,2,1,1,2,1,1,2,1,1,2,1,1,2,1,1,2,1,1]
+    rs = utils.word_rhyme(poem)
+    print(f"Rhymescheme: {rs}")
+
+    tol = 1
+    close = True
+    if rs == correct_rs:
+        print("IS A VILLANELLE")
+        return True
+    else:
+        for i in range(len(rs)):
+            if rs[i] == None:
+                rs[i] = 0
+            if abs(rs[i] - correct_rs[i]) > tol:
+                close == False
+                break
+    
+    if close == True:
+        print("CLOSE TO A VILLANELLE")
+        return False
+    print("IS NOT A VILLANELLE")
+    return False
+    
+def detectBlankVerse(poem):
+    meter = utils.meter_detector(poem)
+    if meter != '':
+        print("IS A BLANK VERSE")
+        return True
+    else:
+        return False
+
+def detectFreeVerse(poem):
+    meter = utils.meter_detector(poem)
+    if meter == '':
+        print("IS A FREE VERSE")
+        return True
+    else:
+        return False
