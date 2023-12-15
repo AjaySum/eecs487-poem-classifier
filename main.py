@@ -8,7 +8,7 @@ haikus = load_dataset("statworx/haiku")
 from PoemSentimentDetector import PoemSentimentDetector
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 def read_text_file(file_path):
-    # Read poem from inputted text file
+    """Read poem from inputted text file."""
     try:
         with open(file_path, 'r', encoding="utf-8", errors="ignore") as file:
             content = file.read()
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     file_path = sys.argv[1]
 
-   # Sample themes for both elegy and ode
+    # Sample themes for both elegy and ode
     elegy_themes = [
         "mourning",
         "loss",
@@ -102,8 +102,8 @@ if __name__ == "__main__":
         "nature",
         "love"
     ]
-    #train sentiment detector
 
+    # train sentiment detector
     sentiment_detector = PoemSentimentDetector(elegy_themes, ode_themes)
 
     elegy_data, elegy_labels = sentiment_detector.load_data('data/poems/elegy')

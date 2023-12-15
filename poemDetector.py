@@ -1,6 +1,7 @@
 import utils
 
 def detectHaiku(poem):
+    """Detect if poem is a haiku."""
     if len(poem) != 3:
         print("NOT A HAIKU")
         return False
@@ -26,10 +27,10 @@ def detectHaiku(poem):
     return False
     
 def detectLimerick(poem):
+    """Detect if poem is a limerick."""
     if len(poem) != 5:
         print("NOT A LIMERICK")
         return False
-    
     
     sent_syllables = [0, 0, 0, 0, 0]
     for i in range(len(poem)):
@@ -37,7 +38,6 @@ def detectLimerick(poem):
             sent_syllables[i] += utils.count_syllables(word)
     print(f"Sent Syllables: {sent_syllables}")
     
-
     part_1 = [0, 1, 4]
     part_2 = [2, 3]
     tol = 1.5
@@ -66,7 +66,6 @@ def detectLimerick(poem):
             print("NOT A LIMERICK, line: ", num+1)
             return False
        
-
     close = False
     for num in lim:
         if num == 1:
@@ -99,6 +98,7 @@ def detectLimerick(poem):
     return False
 
 def detectBallad(poem):
+    """Detect if poem is a ballad."""
     if len(poem) % 4 != 0:
         print("NOT A BALLAD")
         return False
@@ -145,14 +145,7 @@ def detectBallad(poem):
                     close = False
                     break
                 i += 4
-            
-            # for i in range(len(rs)):
-            #     if rs[i] == None:
-            #         rs[i] = 1
-            #     if abs(rs[i] - c[i % 4]) > tol:
-            #         print("yAaaaaaaaaaaa")
-            #         close = False
-            #         break
+
         if close == True:
             print("CLOSE TO A BALLAD", c)
             return False
@@ -162,6 +155,7 @@ def detectBallad(poem):
 
 
 def detectSonnet(poem):
+    """Detect if poem is a Shakespearean or Petrarchan sonnet."""
     if len(poem) != 14:
         print("NOT A SONNET")
         return False
@@ -213,6 +207,7 @@ def detectSonnet(poem):
 
 
 def detectVillanelle(poem):
+    """Detect if poem is a villanelle."""
     if len(poem) != 19:
         print("NOT A VILLANELLE")
         return False
@@ -251,6 +246,7 @@ def detectVillanelle(poem):
     return False
     
 def detectBlankVerse(poem):
+    """Detect if poem is a blank verse."""
     meter = utils.meter_detector(poem)
     if meter != '':
         print("IS A BLANK VERSE")
@@ -259,6 +255,7 @@ def detectBlankVerse(poem):
         return False
 
 def detectFreeVerse(poem):
+    """Detect if poem is a free verse."""
     meter = utils.meter_detector(poem)
     if meter == '':
         print("IS A FREE VERSE")

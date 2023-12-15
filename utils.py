@@ -8,28 +8,17 @@ import re
 import pronouncing
 from string import punctuation
 import numpy as np
-# nltk.download('cmudict')  # Download the CMU Pronouncing Dictionary
 
 d = nltk.corpus.cmudict.dict()
-# t = nltk.download('universal_tagset')
 
 def count_syllables(word): 
     """Count number of syllables in a word."""
-    # word = ''.join(char for char in word if char not in string.punctuation)
-    # word = word.lower()
-
-    # print("PROCESSED: ", word)
-    
     if word in d:
         syllable_count = max([len(list(y for y in x if y[-1].isdigit())) for x in d[word]])
-        #   print(f"The number of syllables in '{word}' is: {syllable_count}")
         return syllable_count
     else:
-        # If the word is not found in the dictionary, a simple fallback method
-        # could be implemented, for example, by counting the number of vowels.
-        # vowels = "aeiouy"
-        # return sum(1 for char in word if char in vowels)
-    
+        # If the word is not found in the dictionary,
+        # use this manual syllable detection method
         vowels = "aeiouy"
         count = 0
         prev_char_was_vowel = False
@@ -51,8 +40,7 @@ def count_syllables(word):
 
 
 def word_rhyme(poem):
-    """"Detects if the words rhyme"""""
-    print(poem)
+    """"Returns rhyme scheme of the poem."""""
     rt = RhymeTagger()
     rt.load_model(model = 'en')
     rhymes = rt.tag(poem, output_format=3) 
@@ -62,11 +50,13 @@ def word_rhyme(poem):
     # rt2.add_to_model()
 
 def get_scansion_line(line):
+    """Gets the scansion of the given line"""
     tokens = line.split()
     pos_tags = pos_tag(tokens)
     print(tokens)
     print(pos_tags)
 
+    # List of parts of speech to prioritize
     keep_list = ['NN', 'NNP', 'NNPS', 'NNS', 'VB', 'VBG', 'VBN', 'VBP', 'VBZ']
 
     scansion = []
@@ -75,9 +65,7 @@ def get_scansion_line(line):
         if tokens[i] in d:
             phonemes = d[tokens[i]][0]
             for phoneme in phonemes:
-                # print(phoneme[-1])
                 if phoneme[-1] == '1' or phoneme[-1] == '2':
-                    # print("HERE")
                     s += '1'
                 elif phoneme[-1] == '0':
                     s += '0'
@@ -90,7 +78,6 @@ def get_scansion_line(line):
         if len(s) > 1:
             for char in s:
                 scansion.append(char)
-            # print(s)
         else:
             scansion.append(s)
     print(scansion)
@@ -98,6 +85,7 @@ def get_scansion_line(line):
     return scansion
 
 def scansion_diff(scansion, correct):
+    """Counts the number of syllables that are different between scansion and given meter."""
     diff = 0
     for i in range(len(scansion)):
         if scansion[i] != correct[i]:
@@ -105,11 +93,11 @@ def scansion_diff(scansion, correct):
     return diff
 
 def meter_detector(poem):
+    """Detect the type of meter in the poem, if any."""
     meters = {
         'iambic trimeter': ['0', '1', '0', '1', '0', '1'],
         'iambic tetrameter': ['0', '1', '0', '1', '0', '1', '0', '1'],
         'iambic pentameter': ['0', '1', '0', '1', '0', '1', '0', '1', '0', '1'],
-        # 'trochaic bimeter' : ['1', '0', '1', '0'],
         'trochaic tetrameter': ['1', '0', '1', '0', '1', '0', '1', '0'],
         'trochaic pentameter': ['1', '0', '1', '0', '1', '0', '1', '0', '1', '0']
     }
@@ -131,7 +119,6 @@ def meter_detector(poem):
         if found == True:
             print("Could be iambic trimeter")
             return 'iambic trimeter'
-        # return found
     elif size == 8:
         correct = [("iambic tetrameter", meters['iambic tetrameter']),
                    ("trochaic tetrameter", meters['trochaic tetrameter'])]
@@ -161,6 +148,5 @@ def meter_detector(poem):
             if found == True:
                 print("Could be", c[0])
                 return c[0]
-        # return found
     
     return ''
